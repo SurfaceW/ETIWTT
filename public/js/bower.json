@@ -1,0 +1,21 @@
+{
+  "name": "ETIWTT",
+  "version": "0.1.0",
+  "authors": [
+    "SurfaceW <yeqingnan@live.cn>"
+  ],
+  "description": "App for fresh things.",
+  "main": "main.js",
+  "keywords": [
+    "ETIWTT"
+  ],
+  "license": "MIT",
+  "homepage": "blog.surfacew.com",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
