@@ -1,2 +1,4 @@
 public/js/bower_components/*
+public/js/lib/jquery.js
+public/js/lib/dropzone.js
 node_modules/*

@@ -1,8 +1,170 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 100%;
 }
 
-a {
-  color: #00B7FF;
+[contenteditable="true"]:active,
+[contenteditable="true"]:focus{
+	/*border:none;*/
+	outline:none;
+}
+
+.cardboard {
+	width: 960px;
+	margin: 0 auto;
+}
+
+.header-bars {
+	padding-top: 20px;
+}
+
+.header-bars img {
+	cursor: pointer;
+}
+
+.add-button {
+	float: left;
+	margin-left: 20px;
+}
+
+.heart-button {
+	float: right;
+	margin-right: 20px;
+}
+
+.done-button {
+	float: right;
+	margin-right: 10px;
+}
+
+.card-box {
+	padding-top: 60px;
+}
+
+.card {
+
+	float: left;
+
+	width: 200px;
+	height: 324px;
+	margin-left: 20px;
+	margin-right: 20px;
+	margin-bottom: 40px;
+
+	box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.5);
+	border-radius: 8px;
+
+}
+
+.card-dropzone {
+	display: none;
+	width: 200px;
+	height: 200px;
+	border-top-left-radius: 8px;
+	border-top-right-radius: 8px;
+}
+
+/* Dropzone CSS Styles */
+
+.card-dropzone {
+	position: absolute;
+	margin-top: -200px;
+
+	z-index: 2;
+}
+
+.dz-image {
+	width: 200px;
+	height: 200px;
+	border-top-right-radius: 8px;
+	border-top-left-radius: 8px;
+}
+
+.dz-image img {
+	width: 200px;
+	height: 200px;
+	border-top-left-radius: 8px;
+	border-top-right-radius: 8px;
+}
+
+.dz-details, .dz-progress, .dz-error-message, .dz-success-mark, .dz-error-mark{
+	display: none;
+}
+
+/* ------------------- */
+
+.card-image {
+	width: 100%;
+	height: 200px;
+	border-top-left-radius: 8px;
+	border-top-right-radius: 8px;
+
+	background-image: url(/images/card/test1.jpg);
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+}
+
+.card-hint {
+	display: inline;
+	position: absolute;
+
+	z-index: 99;
+
+	margin-top: -190px;
+	margin-left: 10px;
+	padding: 5px;
+
+	border-radius: 10px;
+	background-color: rgba(0, 0, 0, 0.3);
+	font-family: Lucida Grande;
+	font-size: 14px;
+	color: white;
+}
+
+.card-name {
+	padding: 10px;
+	text-align: center;
+
+	height: 80px;
+
+	color: rgb(182, 182,182);
+	font-size: 13px;
+	font-family: Lucida Grande;
+	font-weight: lighter;
+	border-top: 1px solid rgb(242, 242, 242);
+}
+
+.card-ui {
+	display: none;
+}
+
+.card-ui > div {
+	float: right;
+	margin-right: 10px;
+	cursor: pointer;
+}
+
+.card-ui-create {
+	display: none;
+	margin-top: -5px;
+	text-align: center;
+}
+
+.card-ui-create > span {
+	padding: 2px 6px 2px 6px;
+	border-radius: 8px;
+
+	background-color: rgba(216, 216, 216, .61);
+	font-size: 12px;
+	font-family: Lucida Grande;
+	color: rgba(74, 74, 74, .58);
+
+	cursor: pointer;
+}
+
+.card-ui-create > span:hover {
+	background-color: rgba(216, 216, 216, .91);
+	color: rgba(255, 255, 255, 1);
 }
