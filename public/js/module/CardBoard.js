@@ -82,7 +82,6 @@ define(function(require, exports, module) {
 
 	// Handle create a card
 	CardBoard.prototype.create = function (card) {
-		_stopEditing();
 		$.post('/card', {
 			'name': card.name,
 			'done': card.done,
@@ -90,7 +89,6 @@ define(function(require, exports, module) {
 			'image': card.image
 		}, function (data) {
 			card.id = data['_id'];
-			card.newcard = false;
 		});
 	};
 
@@ -128,7 +126,6 @@ define(function(require, exports, module) {
 	CardBoard.prototype.del = function (card) {
 		for (var i = 0; i < cards.length; i++) {
 			if (cards[i]['id']=== card['id']) {
-				cards[i].$el.remove();
 				cards.splice(i, 1);
 				return;
 			}
@@ -159,9 +156,9 @@ define(function(require, exports, module) {
 		// Add a new card
 		_this.$el.find('.add-button').click(function () {
 			var newcard = new Card({
-				id: 'newcard',
+				id: null,
 				name: '新建的ETIWTT卡片',
-				image: 'default.png',
+				image: '/images/card/default.jpg',
 				done: 0,
 				favorite: 0,
 				editable: true,
@@ -170,7 +167,14 @@ define(function(require, exports, module) {
 				parent: _this
 			});
 			_this.add(newcard);
+			newcard.$el.addClass('add-card-animation');
+			newcard.$el.children().hide();
 			_this.$box.prepend(newcard.$el);
+			setTimeout(function () {
+				newcard.$el.children().fadeIn('fast');
+				newcard.$el.removeClass('add-card-animation');
+			}, 200);
+
 		});
 
 		// Show the hearted items

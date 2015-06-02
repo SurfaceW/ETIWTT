@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var db = require('../models/db');
+var fs = require('fs');
 var Card = require('../models/Card');
 
 /* GET all of the cards */
@@ -32,9 +33,26 @@ router.post('/', function (req, res) {
 
 /* Delete card */
 router.delete('/:id', function (req, res) {
-    Card.remove({'_id': req.params['id']}, function (err) {
+    var _id = req.params['id'];
+    Card.find({'_id': _id}, function (err, data) {
         if (err) er(res);
-        res.status(200).end();
+
+        // Delete the static file of image
+        var image = data[0].image;
+        if (!image || image.indexOf('/default.jpg') !== -1) {
+            Card.remove({'_id': _id }, function (err) {
+                if (err) er(res);
+                res.status(200).end();
+            });
+            return;
+        }
+        fs.unlink('/Users/yeqingnan/Sites/ETIWTT/public' + image, function (err) {
+            if (err) er(res);
+            Card.remove({'_id': _id }, function (err) {
+                if (err) er(res);
+                res.status(200).end();
+            });
+        });
     });
 });
 

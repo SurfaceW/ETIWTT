@@ -4,7 +4,8 @@ define(function(require, exports, module) {
 	var template = require('templates');
 	var Dropzone = require('dropzone');
 	var dropzoneConf = {
-		url: '/file/upload',
+		url: '/card/image',
+		method: 'post',
 		maxFilesize: 2, // 2MB Maxsize
 		uploadMultiple: false,
 		thumbnailWidth: 200,
@@ -20,7 +21,7 @@ define(function(require, exports, module) {
 		this.$el = template.get('Card');
 		this.id = data.id;
 		this.name = data.name;
-		this.img = data.img;
+		this.image = data.image;
 		this.done = data.done;
 		this.favorite = data.favorite == 1 ? true : false;
 
@@ -43,6 +44,10 @@ define(function(require, exports, module) {
 			'image': data.editableImage || false
 		};
 		this.display = data.display || true;
+		this.modified = false;
+
+		// Other plugins
+		this.dropzone = null;
 
 		// ParentView
 		this.parent = data.parent;
@@ -68,22 +73,55 @@ define(function(require, exports, module) {
 		this.$name.prop({'contenteditable': true});
 	};
 
-// Edit the card image
+	Card.prototype.stopEditName = function () {
+		this.editStatus.name = false;
+		this.$name.prop({'contenteditable': false});
+	};
+
+	// Edit the card image
 	Card.prototype.editImage = function () {
+		var _this = this;
 		this.editable = true;
 		this.editStatus.image = true;
 		this.$image.css({'opacity': 0});
 		this.$uiDropzone.fadeIn('fast');
-		var dropzone = new Dropzone(this.$uiDropzone.get(0), dropzoneConf);
+		if (!this.dropzone) {
+			var conf = $.extend({}, dropzoneConf);
+			conf.url += ('/' + this.id);
+			this.dropzone = new Dropzone(this.$uiDropzone.get(0), conf);
+			// Dropzone ini function, called while ini the dropzone plugin
+			this.dropzone.on('success', function (file) {
+				var res = $.parseJSON(file.xhr.response);
+				_this.image = res.image;
+				_this.modified = true;
+				_this.stopEdit();
+			});
+		}
+	};
+
+	// Stop edit the image
+	Card.prototype.stopEditImage = function () {
+		this.$image.css({'background-image': 'url(' + this.image + ')'});
+		this.$image.css({'opacity': 1});
+		this.$uiDropzone.hide();
 	};
 
 // Stop editing card
 	Card.prototype.stopEdit = function () {
 		this.editable = false;
-		this.$name.prop({'contenteditable': false});
-		this.name = this.$name.text();
-		this.image = this.$image.css('background-image');
-		if (!this.newcard) this.parent.update(this);
+		if (this.$name.text() !== this.name) {
+			this.modified = true;
+			this.name = this.$name.text();
+		}
+		this.stopEditName();
+		this.stopEditImage();
+		if (this.newcard) {
+			this.parent.create(this);
+			this.newcard = false;
+		} else if (this.modified) {
+			this.parent.update(this);
+			this.modified = false;
+		}
 	};
 
 // Render the card with data
@@ -102,6 +140,8 @@ define(function(require, exports, module) {
 		// this.$image.css();
 		this.$name.text(this.name);
 		this.$hint.text(this.done);
+		this.image ? this.$image.css({'background-image': 'url(' + this.image + ')'})
+			: this.$image.css({'background-image': 'url(/images/card/default.jpg)'});
 	};
 
 // Dispose the current card
@@ -121,7 +161,13 @@ define(function(require, exports, module) {
 			if ($tar.hasClass('card-delete')) {
 
 				// Delete a card
-				_this.parent.delete(_this);
+				// _this.$el.css({'-webkit-transform': 'scale(0)'});
+				_this.$el.children().fadeOut(400);
+				_this.$el.addClass('del-card-animation');
+				setTimeout(function () {
+					_this.$el.remove();
+					_this.parent.delete(_this);
+				}, 400);
 
 			} else if ($tar.hasClass('card-favorite')) {
 
@@ -134,17 +180,11 @@ define(function(require, exports, module) {
 				_this.done ++;
 				_this.$hint.text(_this.done);
 
-			} else if ($tar.hasClass('card-create')) {
-
-				// Click the create card button
-				_this.parent.create(_this);
-
 			} else if (_this.editStatus['name']
 				&& !$tar.hasClass('card-name')) {
 
 				// Stop edit modes
 				_this.stopEdit();
-
 			}
 			e.stopPropagation();
 		});
@@ -169,15 +209,10 @@ define(function(require, exports, module) {
 
 		// Edit the image replacement Event
 		// Use plugin dropzone
-		_this.$image.dblclick(function () {
+		_this.$image.dblclick(function (e) {
 			_this.editImage();
 			e.stopPropagation();
 		});
-
-		// Dropzone ini function, called while ini the dropzone plugin
-		dropzoneConf.init = function () {
-			// this.on();
-		};
 	}
 
     module.exports = Card;
